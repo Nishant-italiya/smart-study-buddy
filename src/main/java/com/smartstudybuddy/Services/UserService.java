@@ -2,7 +2,10 @@ package com.smartstudybuddy.Services;
 
 import com.smartstudybuddy.Models.User;
 import com.smartstudybuddy.Repositories.UserRepository;
+import com.smartstudybuddy.Utilis.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,6 +16,9 @@ import java.util.Optional;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     private static final PasswordEncoder passwordEncoder=new BCryptPasswordEncoder();
 
@@ -56,24 +62,32 @@ public class UserService {
     }
 
 
-    public User login(User user) {
-        Optional<User> optionalUser = userRepository.findByUsername(user.getUsername());
+    public ResponseEntity<String> login(User user) {
+        try {
+            Optional<User> optionalUser = userRepository.findByUsername(user.getUsername());
 
-        if (optionalUser.isEmpty()) {
-            throw new RuntimeException("User not found");
+            if (optionalUser.isEmpty()) {
+                return new ResponseEntity<>("User not found", HttpStatus.BAD_REQUEST);
+            }
+
+            User foundUser = optionalUser.get();
+
+            if (!passwordEncoder.matches(user.getPassword(), foundUser.getPassword())) {
+                return new ResponseEntity<>("Invalid password", HttpStatus.BAD_REQUEST);
+            }
+
+            String requestedRole = user.getRole().toUpperCase();
+            String actualRole = foundUser.getRole().toUpperCase();
+
+            if (!requestedRole.equals(actualRole)) {
+                return new ResponseEntity<>("Invalid role", HttpStatus.FORBIDDEN);
+            }
+
+            String jwt = jwtUtil.generateToken(foundUser.getUsername());
+            return new ResponseEntity<>(jwt, HttpStatus.OK);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>("Login failed", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        User foundUser = optionalUser.get();
-        // Check password
-        if (!passwordEncoder.matches(user.getPassword(), foundUser.getPassword())) {
-            throw new RuntimeException("Invalid password");
-        }
-
-        // Check role
-        if (!foundUser.getRole().equals(user.getRole())) {
-            throw new RuntimeException("Invalid role");
-        }
-
-        return foundUser;
     }
 }
