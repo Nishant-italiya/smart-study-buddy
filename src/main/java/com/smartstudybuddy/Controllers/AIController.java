@@ -19,42 +19,35 @@ public class AIController {
     AIService aiService;
 
     @GetMapping("/summary/{subjectId}/{noteTitle}")
-    public ResponseEntity<String> getNoteSummary(
+    public ResponseEntity<?> getNoteSummary(
             @PathVariable String subjectId,
             @PathVariable String noteTitle) {
-        String summary = aiService.getNoteSummary(subjectId, noteTitle);
-        return ResponseEntity.ok(summary);
+            return aiService.getNoteSummary(subjectId, noteTitle);
     }
 
     @GetMapping("/generate-preparation-plan")
-    public ResponseEntity<String> generatePlan() {
-        String plan = aiService.generateEfficientPreparationPlan();
-        return ResponseEntity.ok(plan);
+    public ResponseEntity<?> generatePlan() {
+        return aiService.generateEfficientPreparationPlan();
     }
 
     @GetMapping("/generate-important-questions/{subjectId}")
-    public ResponseEntity<String> generateImportantQuestions(@PathVariable String subjectId) {
-        String questions = aiService.generateImportantQuestions(subjectId);
-        return ResponseEntity.ok(questions);
+    public ResponseEntity<?> generateImportantQuestions(@PathVariable String subjectId) {
+        return  aiService.generateImportantQuestions(subjectId);
     }
 
     @PostMapping("/ask")
-    public ResponseEntity<String> askAI(@RequestBody String question) {
-        String answer = aiService.askGeneralQuestion(question);
-        return ResponseEntity.ok(answer);
+    public ResponseEntity<?> askAI(@RequestBody String question) {
+        return aiService.askGeneralQuestion(question);
     }
 
-    // Step 1: Generate a quiz
     @PostMapping("/generate-quiz")
-    public ResponseEntity<String> generateQuiz(@RequestParam String subjectId, @RequestParam String topic) {
-        String quiz = aiService.generateQuiz(subjectId, topic);
-        return ResponseEntity.ok(quiz);
+    public ResponseEntity<?> generateQuiz(@RequestParam String subjectId, @RequestParam String topic) {
+        return aiService.generateQuiz(subjectId, topic);
     }
 
     @PostMapping("/evaluate-quiz")
-    public ResponseEntity<String> evaluateQuiz(@RequestBody QuizEvaluationRequest request) {
-        String result = aiService.evaluateQuiz(request);
-        return ResponseEntity.ok(result);
+    public ResponseEntity<?> evaluateQuiz(@RequestBody QuizEvaluationRequest request) {
+        return aiService.evaluateQuiz(request);
     }
 
 }

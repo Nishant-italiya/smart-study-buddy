@@ -22,44 +22,46 @@ public class UserService {
 
     private static final PasswordEncoder passwordEncoder=new BCryptPasswordEncoder();
 
-    public User register(User user) {
-        // Check if user with same username already exists (username is unique)
+    public ResponseEntity<?> register(User user) {
+        // Check if user with same username already exists
         Optional<User> existingUser = userRepository.findByUsername(user.getUsername());
         if (existingUser.isPresent()) {
-            throw new RuntimeException("Username already exists");
+            return new ResponseEntity<>("Username already exists", HttpStatus.BAD_REQUEST);
         }
 
         // Validate common fields
         if (user.getUsername() == null || user.getUsername().isEmpty()) {
-            throw new RuntimeException("Username is required");
+            return new ResponseEntity<>("Username is required", HttpStatus.BAD_REQUEST);
         }
         if (user.getPassword() == null || user.getPassword().isEmpty()) {
-            throw new RuntimeException("Password is required");
+            return new ResponseEntity<>("Password is required", HttpStatus.BAD_REQUEST);
         }
         if (user.getRole() == null || user.getRole().isEmpty()) {
-            throw new RuntimeException("Role is required");
+            return new ResponseEntity<>("Role is required", HttpStatus.BAD_REQUEST);
         }
 
-        // Normalize role to "ROLE_STUDENT" / "ROLE_PROFESSOR"
+        // Normalize role
         String role = user.getRole().toUpperCase();
         if (role.equals("STUDENT")) {
             if (user.getBranch() == null || user.getBranch().isEmpty()) {
-                throw new RuntimeException("Branch is required for students");
+                return new ResponseEntity<>("Branch is required for students", HttpStatus.BAD_REQUEST);
             }
             if (user.getSemester() <= 0) {
-                throw new RuntimeException("Semester must be greater than 0 for students");
+                return new ResponseEntity<>("Semester must be greater than 0 for students", HttpStatus.BAD_REQUEST);
             }
         } else if (role.equals("PROFESSOR")) {
             user.setBranch(null);
             user.setSemester(0);
         } else {
-            throw new RuntimeException("Invalid role. Must be STUDENT or PROFESSOR");
+            return new ResponseEntity<>("Invalid role. Must be STUDENT or PROFESSOR", HttpStatus.BAD_REQUEST);
         }
 
         // Encode password and save
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
     }
+
 
 
     public ResponseEntity<String> login(User user) {

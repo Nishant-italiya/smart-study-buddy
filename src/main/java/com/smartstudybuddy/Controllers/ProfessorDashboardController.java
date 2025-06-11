@@ -21,13 +21,13 @@ public class ProfessorDashboardController {
 
     // Add new subject - ownership is assigned inside service by logged-in professor
     @PostMapping("/subjects")
-    public Subject addSubject(@RequestBody Subject subject) {
+    public ResponseEntity<?> addSubject(@RequestBody Subject subject) {
         return professorService.addSubject(subject);
     }
 
     // Add notes to a subject
     @PostMapping("/subjects/notes")
-    public Note uploadNotePdf(@RequestParam("subjectId") String subjectId,
+    public ResponseEntity<?> uploadNotePdf(@RequestParam("subjectId") String subjectId,
                               @RequestParam("title") String title,
                               @RequestParam("file") MultipartFile file) throws IOException {
         return professorService.uploadNotes(subjectId, title, file);
@@ -35,46 +35,46 @@ public class ProfessorDashboardController {
 
     // Set exam for a subject
     @PostMapping("/subjects/exams")
-    public Exam setExam(@RequestBody Exam exam) {
+    public ResponseEntity<?> setExam(@RequestBody Exam exam) {
         return professorService.setExam(exam);
     }
 
     // Get all subjects owned by the logged-in professor
     @GetMapping("/subjects")
-    public List<Subject> getSubjects() {
+    public ResponseEntity<?> getSubjects() {
         return professorService.getSubjects();
     }
 
     @GetMapping("/notes/{subjectId}")
-    public ResponseEntity<List<Note>> getNotesBySubject(@PathVariable String subjectId) {
+    public ResponseEntity<?> getNotesBySubject(@PathVariable String subjectId) {
         return ResponseEntity.ok(professorService.getNotesBySubjectForProfessor(subjectId));
     }
 
     @GetMapping("/exams/{subjectId}")
-    public ResponseEntity<List<Exam>> getExamsBySubject(@PathVariable String subjectId) {
+    public ResponseEntity<?> getExamsBySubject(@PathVariable String subjectId) {
         return ResponseEntity.ok(professorService.getExamsBySubjectForProfessor(subjectId));
     }
 
     @DeleteMapping("/delete-subject/{subjectId}")
-    public ResponseEntity<String> deleteSubject(@PathVariable String subjectId) {
+    public ResponseEntity<?> deleteSubject(@PathVariable String subjectId) {
         professorService.deleteSubjectByProfessor(subjectId);
         return ResponseEntity.ok("Subject and related data deleted successfully.");
     }
 
     @DeleteMapping("/delete-note/{noteId}")
-    public ResponseEntity<String> deleteNote(@PathVariable String noteId) {
+    public ResponseEntity<?> deleteNote(@PathVariable String noteId) {
         professorService.deleteNoteById(noteId);
         return ResponseEntity.ok("Note deleted successfully.");
     }
 
     @DeleteMapping("/delete-exam/{examId}")
-    public ResponseEntity<String> deleteExam(@PathVariable String examId) {
+    public ResponseEntity<?> deleteExam(@PathVariable String examId) {
         professorService.deleteExamById(examId);
         return ResponseEntity.ok("Exam deleted successfully.");
     }
 
     @DeleteMapping("/delete-profile")
-    public ResponseEntity<String> deleteMyProfile() {
+    public ResponseEntity<?> deleteMyProfile() {
         professorService.deleteAuthenticatedUser();
         return ResponseEntity.ok("Profile deleted successfully.");
     }

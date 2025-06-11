@@ -21,40 +21,40 @@ public class StudentController {
 
     // Register a subject
     @PostMapping("/register/{subjectId}")
-    public String registerSubject(@PathVariable String subjectId) {
+    public ResponseEntity<String> registerSubject(@PathVariable String subjectId) {
         return studentService.registerSubject(subjectId);
     }
 
     @GetMapping("/subjects")
-    public List<Subject> getRegisteredSubjects() {
+    public ResponseEntity<?> getRegisteredSubjects() {
         return studentService.getRegisteredSubjects();
     }
 
     // Get notes for registered subject
     @GetMapping("/{subjectId}/notes")
-    public List<Note> getNotesBySubjectId(@PathVariable String subjectId) {
+    public ResponseEntity<?> getNotesBySubjectId(@PathVariable String subjectId) {
         return studentService.getNotesBySubject(subjectId);
     }
 
     // Get exams for registered subject
     @GetMapping("/{subjectId}/exams")
-    public List<Exam> getExamsBySubjectId(@PathVariable String subjectId) {
+    public ResponseEntity<?> getExamsBySubjectId(@PathVariable String subjectId) {
         return studentService.getExamsBySubject(subjectId);
     }
 
     @GetMapping("/my-reports")
-    public List<QuizReport> getMyReports() {
+    public ResponseEntity<?> getMyReports() {
         return studentService.getMyReports();
     }
 
     @DeleteMapping("/unregister/{subjectId}")
-    public ResponseEntity<String> deleteRegisteredSubject(@PathVariable String subjectId) {
+    public ResponseEntity<?> deleteRegisteredSubject(@PathVariable String subjectId) {
         studentService.deleteRegisteredSubject(subjectId);
         return ResponseEntity.ok("Subject unregistered successfully.");
     }
 
     @DeleteMapping("/delete-profile")
-    public ResponseEntity<String> deleteMyProfile() {
+    public ResponseEntity<?> deleteMyProfile() {
         studentService.deleteAuthenticatedUser();
         return ResponseEntity.ok("Profile deleted successfully.");
     }
