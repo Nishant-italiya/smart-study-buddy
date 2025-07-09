@@ -24,6 +24,11 @@ A backend, AI-powered web platform built with **Spring Boot** that empowers stud
 -  View or delete your uploaded notes, exams, or subjects
 -  Delete your professor profile
 
+ ### 🛠 For Admins
+- View all registered users (with their roles)
+- Remove any student or professor
+- Automatically remove associated data (notes, exams, subjects, student registrations)
+
 ---
 
 ## ⚙ Tech Stack
@@ -156,6 +161,15 @@ bash
 | GET    | `/student/my-reports`                | View AI-generated reports |
 | DELETE | `/student/unregister/{subjectId}`    | Unregister from subject   |
 | DELETE | `/student/delete-profile`            | Delete profile            |
+
+---
+
+### 🛡 Admin APIs
+
+| Method | Endpoint                                 | Description                            | Access |
+|--------|------------------------------------------|----------------------------------------|--------|
+| GET    | `/admin/users`                           | Get list of all users (username + role) | ADMIN |
+| DELETE | `/admin/remove?username=x&role=y`        | Delete a user by username and role     | ADMIN |
 
 ---
 
