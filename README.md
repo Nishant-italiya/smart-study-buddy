@@ -60,7 +60,6 @@ src/
 - ├── config/         # Security config and JWT setup
 - └── dto/            # Data transfer objects (requests/responses)
 
-- 
 ---
 
 ## 🔐 Authentication & Authorization
